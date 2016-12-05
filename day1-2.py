@@ -56,18 +56,11 @@ for command in commands:
   rotate = command[0]
   distance = int( command[1:] )
   if command[0] == 'R':
-    heading += 1
-    if heading > 3:
-      heading = 0
+    heading = 0 if heading == 3 else heading + 1
   else:
-    heading -= 1
-    if heading < 0:
-      heading = 3
+    heading = 3 if heading == 0 else heading - 1
 
   ( x, y ) = getNewPosition( x, y, heading, distance )
-  #print("%d %d ... %d, %d (%d)" % ( heading, distance, x, y, heading ) )
 
 print "distance from end to start: %d blocks" % getDistance( x, y, 0, 0 )
-print "distance from end to bunny: %d blocks" % getDistance( x, y, bunnyX, bunnyY )
 print "distance from start to bunny: %d blocks" % getDistance( 0, 0, bunnyX, bunnyY )
-
