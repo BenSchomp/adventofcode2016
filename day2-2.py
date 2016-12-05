@@ -37,6 +37,6 @@ for command in commands:
     elif cur == 'R' and x < 4 and buttons[x+1][y] != ' ':
       x += 1
 
-  answer += str( buttons[x][y] )
+  answer += buttons[x][y]
 
 print answer
