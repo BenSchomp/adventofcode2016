@@ -18,4 +18,5 @@ while found < 8:
       found += 1
   index += 1
 
-print "...", "Password:", ''.join( password )
+print "..."
+print "Password:", ''.join( password )

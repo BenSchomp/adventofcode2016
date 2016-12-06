@@ -20,10 +20,9 @@ for line in file:
       else:
         counts[name[i]] += 1
 
-  sortedcounts = sorted(counts.items(), key=operator.itemgetter(1))
+  # sort the dictionary by value
+  sortedcounts = sorted( counts.items(), key=operator.itemgetter(1) )
   sortedcounts.reverse()
-  #print sortedcounts
-  #print len(sortedcounts)
 
   numcounts = len(sortedcounts)
   testchecksum = ''
@@ -31,26 +30,24 @@ for line in file:
   i = 0
   while i < numcounts:
     cur = sortedcounts[i][1]
-    #print "cur: ", cur
 
-    sub = [ sortedcounts[i][0] ]
+    subgroup = [ sortedcounts[i][0] ]
 
     j = i+1
     while j < numcounts:
       if sortedcounts[j][1] == cur:
-        i = j+1
-        sub.append( sortedcounts[j][0] )
+        i = j
+        subgroup.append( sortedcounts[j][0] )
       j += 1
 
-    sortedsub = sorted( sub )
-    #print "sortedsub: ", sortedsub
-    testchecksum += ''.join(sortedsub)
-    testchecksum = testchecksum[:5]
+    sortedsubgroup = sorted( subgroup )
+    testchecksum += ''.join(sortedsubgroup)
     i += 1
 
+  testchecksum = testchecksum[:5]
   if checksum == testchecksum:
     answer += int(sectorid)
-    print answer, name, sectorid, checksum, testchecksum
+    #print answer, name, sectorid, checksum, testchecksum
 
 print answer
 file.close()
