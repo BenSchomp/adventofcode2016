@@ -4,9 +4,7 @@ file = open('day6-input.txt', 'r')
 
 numcols = 0
 cols = []
-linecount = 0
 for line in file:
-  linecount += 1
   numcols = len(line)
   for i in range(0, numcols-1):
     if len(cols) < i+1:
@@ -18,6 +16,8 @@ for line in file:
     else:
       cols[i][line[i]] += 1
 
+file.close()
+
 # sort the dictionaries by value
 answer = ''
 for i in range(0, numcols-1):
@@ -25,5 +25,3 @@ for i in range(0, numcols-1):
   answer += sortedcols[0][0]
 
 print answer
-
-file.close()
