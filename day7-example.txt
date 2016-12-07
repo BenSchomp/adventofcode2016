@@ -1,0 +1,5 @@
+abba[mnop]qrst
+abcd[bddb]xyyx
+aaaa[qwer]tyui
+ioxxoj[asdfgh]zxcvbn
+outside1[inside1]outside2[inside2]outside3[inside3]outside3
