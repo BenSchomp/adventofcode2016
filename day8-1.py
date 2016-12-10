@@ -47,7 +47,7 @@ for line in file:
       for x in range( screen_w ):
         screen[(x+by)%screen_w][row] = old[x]
 
-  displayScreen( screen, screen_w, screen_h )
+displayScreen( screen, screen_w, screen_h )
 
 count = 0
 for x in range( screen_w ):
