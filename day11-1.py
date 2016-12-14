@@ -27,15 +27,12 @@ def move( floors, items, to ):
     floors[to].append( tmp )
     floors[to].sort()
   setCur( floors, to )
-
+  
 seen = {}
-def solve( floors, steps ):
-  #display( floors, '+ solve:' )
-
+def checkSeen( floors ):
   # seen this position before?
   global seen
   cur = getCur( floors )
-  numItems = len( floors[cur] )
 
   pos = ''
   for floor in floors[1:]:
@@ -44,15 +41,23 @@ def solve( floors, steps ):
 
   if pos in seen:
     #print '! seen this position before'
-    return -1
+    return
   else:
     seen[pos] = 1
+
+def solve( floors, steps ):
+  prefix = ''
+  for i in range( steps ):
+    prefix += '.'
+  print '[%03d] %d' % (steps, getCur( floors ) ), floors[1:], prefix
+
+  cur = getCur( floors )
+  numItems = len( floors[cur] )
 
   # puzzle solved?
   if len( floors[1] ) + len( floors[2] ) + len( floors[3] ) == 0:
     print '*** solution found (%d) ***' % steps
-    print floors
-    return steps
+    return
   
   # match up microchips with generators
   tmp = deepcopy( floors[cur] )
@@ -75,7 +80,7 @@ def solve( floors, steps ):
 
   if len( generators ) > matches and len( chips ) > matches:
     #print '! fried', tmp
-    return -1
+    return
   
   # try moving each piece up and then down and both dirs in pairs
   orig = deepcopy( floors )
@@ -84,17 +89,13 @@ def solve( floors, steps ):
     if cur < 4:
       floors = deepcopy( orig )
       move( floors, [i], cur+1 )
-      result = solve( floors, steps+1 )
-      if result > 0:
-        return result
+      solve( floors, steps+1 )
 
     #down
     if cur > 1:
       floors = deepcopy( orig )
       move( floors, [i], cur-1 )
-      result = solve( floors, steps+1 )
-      if result > 0:
-        return result
+      solve( floors, steps+1 )
 
   for i in range( 0, numItems ):
     for j in range( i+1, numItems ):
@@ -102,23 +103,19 @@ def solve( floors, steps ):
       if cur < 4:
         floors = deepcopy( orig )
         move( floors, [i, j], cur+1 )
-        result = solve( floors, steps+1 )
-        if result > 0:
-          return result
+        solve( floors, steps+1 )
 
       #down
       if cur > 1:
         floors = deepcopy( orig )
         move( floors, [i, j], cur-1 )
-        result = solve( floors, steps+1 )
-        if result > 0:
-          return result
+        solve( floors, steps+1 )
 
-  return -1
+  return
 
 # initial setup
 floors =[ [] for i in range(0, 5) ]
-floors[0].append( 1 )
+floors[0].append( 4 ) # elevator starts on first floor
 i = 1
 for line in file:
   line = line.rstrip()
@@ -140,7 +137,6 @@ file.close()
 
 print ' -=- begin -=-'
 display( floors )
-answer = solve( floors, 0 )
+solve( floors, 0 )
 print ' -=- done -=-'
-print answer
 
