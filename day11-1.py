@@ -23,10 +23,10 @@ class Node:
     self.distance = orig.distance + 1
 
   def key( self ):
-    result = '|'
+    result = '| '
     for floor in self.floors:
-      result += ''.join( floor ) + '|'
-    result += '-' + str( self.elevator )
+      result += ' '.join( floor ) + ' | '
+    result += '- ' + str( self.elevator )
     return result
 
   def isSolved( self ):
@@ -51,12 +51,37 @@ class Node:
           matches += 1
           break
 
-    if len( generators ) > matches and len( chips ) > matches:
-      #print ' ! fried', self.floors[ self.elevator ], '!'
-      return True
-    else:
-      return False
+    return len( generators ) > 0 and len( chips ) > matches
+    
+# why doesn't this work? should be a more efficient inline check
+    #i = 0
+    #genPresent = False
+    #numItems = len( self.floors[ self.elevator ] )
+    #while i < numItems:
+      #cur = self.floors[ self.elevator ][i]
+      #if cur[1] == 'M':
+        #chipType = cur[0]
+        #chipMatched = False
+        #j = 0
+        #while j < numItems:
+          #if j == i:
+            #continue
+          #cur = self.floors[ self.elevator ][j]
+          #if cur[1] == 'G':
+            #genPresent = True
+            #genType = cur[0]
+            #if chipType == genType:
+              #chipMatched = True
+              #break
+          #j += 1
+#
+        #if genPresent and not chipMatched:
+          #return True
+#
+      ##i += 1
 
+    #return False
+#
   def setFloors( self, newFloors ):
     self.floors = newFloors
     for i in self.floors:
@@ -69,12 +94,12 @@ class Node:
     if self.key() in self.nodes:
       #print ' ! already seen it !'
       return False
-    self.nodes[ self.key() ] = self
+    self.nodes[ self.key() ] = 1
 
     if self.isFried():
       return False
 
-    self.nodes[id(self)] = self
+    #self.nodes[id(self)] = self
     return True
 
   # returns False if the new position is invalid
@@ -93,13 +118,16 @@ class Node:
     # check solved
     if self.isSolved():
       print "** solved: %d steps **" % self.distance
+      exit()
       i = self
+      step = self.distance
       while i.parentId != -1:
-        print i.key()
-        #i.display()
+        #print 'step %d:' % step #, i.key()
+        i.display()
         i = self.nodes[i.parentId]
-      #i.display()
-      print i.key()
+        step -= 1
+      i.display()
+      #print 'step %d:' % step #, i.key()
       exit()
 
     return self.markSeen()
@@ -108,7 +136,7 @@ class Node:
     print
     if text != '':
       print text
-    print "Id: %d, Key: %s" % (id(self), self.key())
+    #print "Id: %d, Key: %s" % (id(self), self.key())
     for i in range( 3, -1, -1 ):
       print 'f%d:' % (i+1),
       print '*' if self.elevator == i else ' ',
@@ -147,10 +175,14 @@ print "\n---- ROOT (id: %d, #work: %d, dist: %d) ----" \
 root.display()
 
 # do it
+curLevel = 0
 while len( work ) > 0:
   parent = work.popleft()
-  print "\n---- New Parent (id: %d, #work: %d, dist: %d) ----" \
-    % ( id(parent), len( work ), parent.distance + 1 )
+  #print "\n---- New Parent (id: %d, #work: %d, dist: %d) ----" \
+    #% ( id(parent), len( work ), parent.distance + 1 )
+  if parent.distance + 1 > curLevel:
+    curLevel = parent.distance + 1
+    print "++ New Level: %d, Size of Work: %d" % ( curLevel, len( work ) )
 
   curElevator = parent.elevator
   curFloor = parent.floors[ curElevator ]
