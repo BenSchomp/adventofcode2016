@@ -3,6 +3,7 @@ from collections import deque
   
 class Node:
   nodes = dict()
+  uniquePositions = dict()
 
   def __init__( self, orig=None ):
     self.floors = []
@@ -21,11 +22,36 @@ class Node:
     self.parentId = id( orig )
     self.distance = orig.distance + 1
 
-  def key( self ):
+  def key_old( self ):
     result = ''
     for floor in self.floors:
       result += ''.join( floor ) + '|'
     result += '-' + str( self.elevator )
+    return result
+
+  def key( self ):
+    result = ''
+    for floor in self.floors:
+      floorResult = ''
+      i = 0
+      iMax = len(floor)
+      while i < iMax:
+        cur = floor[i]
+        if i+1 < iMax:
+          if floor[i][0] == floor[i+1][0]:
+            # we've got a pair
+            floorResult += 'P'
+            i += 1
+          else:
+            floorResult += 'S'
+        else:
+          floorResult += 'S'
+
+        i += 1
+
+      result = result + ''.join(sorted(floorResult)) + ','
+
+    result += str(self.elevator)
     return result
 
   def isSolved( self ):
@@ -71,15 +97,15 @@ class Node:
 
   # returns False if it was previously seen, or fries chips
   def markSeen( self ):
-    if self.key() in self.nodes:
+    if self.key() in self.uniquePositions:
       #print ' ! already seen it !'
       return False
-    self.nodes[ self.key() ] = 1
+    self.uniquePositions[ self.key() ] = 1
 
     if self.isFried():
       return False
 
-    #self.nodes[id(self)] = self
+    self.nodes[id(self)] = self
     return True
 
   # returns False if the new position is invalid
@@ -99,15 +125,18 @@ class Node:
     if self.isSolved():
       print "** solved: %d steps **" % self.distance
       exit()
+
+    # if storing nodes can show the path
+    # if only storing unique positions, path not avail
       i = self
       step = self.distance
       while i.parentId != -1:
-        #print 'step %d:' % step #, i.key()
-        i.display()
+        txt = 'step %d - %s' % ( step , i.key() )
+        i.display( txt )
         i = self.nodes[i.parentId]
         step -= 1
-      i.display()
-      #print 'step %d:' % step #, i.key()
+      txt = 'step %d - %s' % ( step , i.key() )
+      i.display( txt )
       exit()
 
     return self.markSeen()
@@ -122,7 +151,7 @@ class Node:
       print '*' if self.elevator == i else ' ',
       print ' '.join( self.floors[i] )
 
-file = open('day11-example.txt', 'r')
+file = open('day11-input2.txt', 'r')
 
 # initial setup
 floors =[ [] for i in range(0, 4) ]
@@ -162,20 +191,18 @@ while len( work ) > 0:
     #% ( id(parent), len( work ), parent.distance + 1 )
   if parent.distance + 1 > curLevel:
     curLevel = parent.distance + 1
-    print "++ New Level: %d, Size of Work: %d" % ( curLevel, len( work ) )
+    print "++ Level: %d, Work Queue: %d" % ( curLevel, len( work ) )
 
   curElevator = parent.elevator
   curFloor = parent.floors[ curElevator ]
   numItems = len( curFloor )
-  floorMin = 0
 
+  # once you clear the lower floors, no need to move anything down there
+  floorMin = 0
   if( len( parent.floors[0] ) == 0 ):
     floorMin = 1
     if( len( parent.floors[1] ) == 0 ):
       floorMin = 2
-
-  twoUp = False
-  twoDown = False
 
   # try moving pieces in pairs
   for i in range( 0, numItems ):
@@ -185,25 +212,23 @@ while len( work ) > 0:
         newNode = Node( parent )
         if newNode.move( [ curFloor[i], curFloor[j] ], curElevator + 1 ):
           work.append( newNode )
-          twoUp = True
 
       #down
       if curElevator > floorMin:
         newNode = Node( parent )
         if newNode.move( [ curFloor[i], curFloor[j] ], curElevator - 1 ):
           work.append( newNode )
-          twoDown = True
 
   # if that's not possible, try singles
   for i in range( 0, numItems ):
     # up
-    if not twoUp and curElevator < 3:
+    if curElevator < 3:
       newNode = Node( parent )
       if newNode.move( [ curFloor[i] ], curElevator + 1 ):
         work.append( newNode )
 
     #down
-    if not twoDown and curElevator > floorMin:
+    if curElevator > floorMin:
       newNode = Node( parent )
       if newNode.move( [ curFloor[i] ], curElevator - 1 ):
         work.append( newNode )
