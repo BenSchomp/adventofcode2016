@@ -4,7 +4,6 @@ from collections import deque
 class Node:
   nodes = dict()
 
-  #def __init__( self, floors, elevator ):
   def __init__( self, orig=None ):
     self.floors = []
     self.elevator = 0
@@ -23,65 +22,46 @@ class Node:
     self.distance = orig.distance + 1
 
   def key( self ):
-    result = '| '
+    result = ''
     for floor in self.floors:
-      result += ' '.join( floor ) + ' | '
-    result += '- ' + str( self.elevator )
+      result += ''.join( floor ) + '|'
+    result += '-' + str( self.elevator )
     return result
 
   def isSolved( self ):
     return len( self.floors[0] ) + len( self.floors[1] ) + len( self.floors[2] ) == 0
 
   def isFried( self ):
-    # match up microchips with generators
-    chips = []
-    generators = []
-    for i in self.floors[ self.elevator ]:
-      if i[1] == 'M':
-        chips.append( i )
-      elif i[1] == 'G':
-        generators.append( i )
-      else:
-        exit()
+    i = 0
+    genPresent = False
+    floor = self.floors[ self.elevator ] 
+    numItems = len( floor )
 
-    matches = 0
-    for i in chips:
-      for j in generators:
-        if i[0] == j[0]:
-          matches += 1
-          break
+    while i < numItems:
+      cur = floor[i] # 'HM'
+      if cur[1] == 'M':
+        chipType = cur[0] # 'H'
+        chipMatched = False
+        j = 0
+        while j < numItems:
+          if j == i:
+            j += 1
+            continue
+          cur = floor[j] # 'HG'
+          if cur[1] == 'G':
+            genPresent = True
+            genType = cur[0] # 'H'
+            if chipType == genType:
+              chipMatched = True
+              break
+          j += 1
 
-    return len( generators ) > 0 and len( chips ) > matches
-    
-# why doesn't this work? should be a more efficient inline check
-    #i = 0
-    #genPresent = False
-    #numItems = len( self.floors[ self.elevator ] )
-    #while i < numItems:
-      #cur = self.floors[ self.elevator ][i]
-      #if cur[1] == 'M':
-        #chipType = cur[0]
-        #chipMatched = False
-        #j = 0
-        #while j < numItems:
-          #if j == i:
-            #continue
-          #cur = self.floors[ self.elevator ][j]
-          #if cur[1] == 'G':
-            #genPresent = True
-            #genType = cur[0]
-            #if chipType == genType:
-              #chipMatched = True
-              #break
-          #j += 1
-#
-        #if genPresent and not chipMatched:
-          #return True
-#
-      ##i += 1
+        if genPresent and not chipMatched:
+          return True
+      i += 1
 
-    #return False
-#
+    return False
+
   def setFloors( self, newFloors ):
     self.floors = newFloors
     for i in self.floors:
@@ -142,7 +122,7 @@ class Node:
       print '*' if self.elevator == i else ' ',
       print ' '.join( self.floors[i] )
 
-file = open('day11-input.txt', 'r')
+file = open('day11-example.txt', 'r')
 
 # initial setup
 floors =[ [] for i in range(0, 4) ]
@@ -187,21 +167,17 @@ while len( work ) > 0:
   curElevator = parent.elevator
   curFloor = parent.floors[ curElevator ]
   numItems = len( curFloor )
+  floorMin = 0
 
-  # try moving each piece up and then down and both dirs in pairs
-  for i in range( 0, numItems ):
-    # up
-    if curElevator < 3:
-      newNode = Node( parent )
-      if newNode.move( [ curFloor[i] ], curElevator + 1 ):
-        work.append( newNode )
+  if( len( parent.floors[0] ) == 0 ):
+    floorMin = 1
+    if( len( parent.floors[1] ) == 0 ):
+      floorMin = 2
 
-    #down
-    if curElevator > 0:
-      newNode = Node( parent )
-      if newNode.move( [ curFloor[i] ], curElevator - 1 ):
-        work.append( newNode )
+  twoUp = False
+  twoDown = False
 
+  # try moving pieces in pairs
   for i in range( 0, numItems ):
     for j in range( i+1, numItems ):
       # up
@@ -209,11 +185,27 @@ while len( work ) > 0:
         newNode = Node( parent )
         if newNode.move( [ curFloor[i], curFloor[j] ], curElevator + 1 ):
           work.append( newNode )
+          twoUp = True
 
       #down
-      if curElevator > 0:
+      if curElevator > floorMin:
         newNode = Node( parent )
         if newNode.move( [ curFloor[i], curFloor[j] ], curElevator - 1 ):
           work.append( newNode )
+          twoDown = True
+
+  # if that's not possible, try singles
+  for i in range( 0, numItems ):
+    # up
+    if not twoUp and curElevator < 3:
+      newNode = Node( parent )
+      if newNode.move( [ curFloor[i] ], curElevator + 1 ):
+        work.append( newNode )
+
+    #down
+    if not twoDown and curElevator > floorMin:
+      newNode = Node( parent )
+      if newNode.move( [ curFloor[i] ], curElevator - 1 ):
+        work.append( newNode )
 
 
