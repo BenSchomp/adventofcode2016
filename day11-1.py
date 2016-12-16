@@ -3,7 +3,6 @@ from collections import deque
   
 class Node:
   nodes = dict()
-  uniquePositions = dict()
 
   def __init__( self, orig=None ):
     self.floors = []
@@ -19,7 +18,7 @@ class Node:
   def copy_ctor( self, orig ):
     self.floors = deepcopy( orig.floors )
     self.elevator = orig.elevator
-    self.parentId = id( orig )
+    self.parentId = self.key() # id( orig )
     self.distance = orig.distance + 1
 
   def key_old( self ):
@@ -29,6 +28,8 @@ class Node:
     result += '-' + str( self.elevator )
     return result
 
+  # the key is not a hash - multiple states can map to the same key
+  # since pairs are interchangeable, just mark the position of pairs & singles
   def key( self ):
     result = ''
     for floor in self.floors:
@@ -97,15 +98,13 @@ class Node:
 
   # returns False if it was previously seen, or fries chips
   def markSeen( self ):
-    if self.key() in self.uniquePositions:
-      #print ' ! already seen it !'
+    if self.key() in self.nodes:
       return False
-    self.uniquePositions[ self.key() ] = 1
 
     if self.isFried():
       return False
 
-    self.nodes[id(self)] = self
+    self.nodes[ self.key() ] = self
     return True
 
   # returns False if the new position is invalid
@@ -123,20 +122,15 @@ class Node:
 
     # check solved
     if self.isSolved():
-      print "** solved: %d steps **" % self.distance
-      exit()
-
-    # if storing nodes can show the path
-    # if only storing unique positions, path not avail
       i = self
       step = self.distance
       while i.parentId != -1:
-        txt = 'step %d - %s' % ( step , i.key() )
-        i.display( txt )
+        i.display( 'step ' + str(step) )
         i = self.nodes[i.parentId]
         step -= 1
-      txt = 'step %d - %s' % ( step , i.key() )
-      i.display( txt )
+      i.display( 'step ' + str(step) )
+
+      print "\n** solved: %d steps **" % self.distance
       exit()
 
     return self.markSeen()
@@ -145,7 +139,6 @@ class Node:
     print
     if text != '':
       print text
-    #print "Id: %d, Key: %s" % (id(self), self.key())
     for i in range( 3, -1, -1 ):
       print 'f%d:' % (i+1),
       print '*' if self.elevator == i else ' ',
@@ -179,19 +172,14 @@ work = deque() # queue to hold all current level of working nodes
 root = Node()
 root.setFloors( floors )
 work.append( root )
-print "\n---- ROOT (id: %d, #work: %d, dist: %d) ----" \
-  % ( id(root), len( work ), 0 )
-root.display()
 
 # do it
-curLevel = 0
+level = 0
 while len( work ) > 0:
   parent = work.popleft()
-  #print "\n---- New Parent (id: %d, #work: %d, dist: %d) ----" \
-    #% ( id(parent), len( work ), parent.distance + 1 )
-  if parent.distance + 1 > curLevel:
-    curLevel = parent.distance + 1
-    print "++ Level: %d, Work Queue: %d" % ( curLevel, len( work ) )
+  if parent.distance + 1 > level:
+    level = parent.distance + 1
+    print "++ Level: %d, Work Queue: %d" % ( level, len( work ) )
 
   curElevator = parent.elevator
   curFloor = parent.floors[ curElevator ]
@@ -219,7 +207,7 @@ while len( work ) > 0:
         if newNode.move( [ curFloor[i], curFloor[j] ], curElevator - 1 ):
           work.append( newNode )
 
-  # if that's not possible, try singles
+  # ... now run through the singles
   for i in range( 0, numItems ):
     # up
     if curElevator < 3:
