@@ -3,7 +3,7 @@ from copy import deepcopy
 # discs[num] = [ size, cur ]
 discs = []
 
-version = 'day1' # example, day1, day2
+version = 'day2' # example, day1, day2
 if version == 'example':
   discs.append( [ 5, 4 ] )
   discs.append( [ 2, 1 ] )
@@ -26,9 +26,7 @@ def advance( d, tDelta ):
   for cur in d:
     cur[1] += tDelta
     cur[1] = cur[1] % cur[0]
-    #print tDelta, cur
     if cur[1] != 0:
-      #print " * can't drop"
       return False
     tDelta += 1
 
