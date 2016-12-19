@@ -1,10 +1,13 @@
-version = 'part1' # 'example'
+version = 'part1' # 'example', 'part1', 'part2'
 if version == 'example':
   pIn = '10000'
   pLen = 20
-elif version == 'part1':
+elif version[0:-1] == 'part':
   pIn = '00101000101111010'
-  pLen = 272
+  if version[-1] == '1':
+    pLen = 272
+  else:
+    pLen = 35651584
 
 def dragon( s ):
   reverse = ''
@@ -33,7 +36,7 @@ def getChecksum( source ):
      
 
 data = pIn
-#print data, len( data )
+print "input:", data, pLen
 while len( data ) < pLen:
   data = dragon( data )
   #print data, len( data )
