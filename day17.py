@@ -1,17 +1,22 @@
 from collections import deque
 import hashlib
 
+version = 'part1'
+if version == 'example':
+  pIn = 'hijkl'
+  pOut = 'no solution'
+  pIn = 'ihgpwlah'
+  pOut = 'DDRRRD'
+  pIn = 'kglvqrro'
+  pOut = 'DDUDRLRRUDRD'
+  pIn = 'ulqzkmiv'
+  pOut = 'DRURDRUDDLLDLUURRDULRLDUUDDDRR'
+elif version == 'part1':
+  pIn = 'lpvhkcbi'
+else:
+  exit()
+
 work = deque() # queue to hold all current level of working nodes
-
-pIn = 'hijkl'
-pOut = 'no solution'
-pIn = 'ihgpwlah'
-pOut = 'DDRRRD'
-pIn = 'kglvqrro'
-pOut = 'DDUDRLRRUDRD'
-pIn = 'ulqzkmiv'
-pOut = 'DRURDRUDDLLDLUURRDULRLDUUDDDRR'
-
 work.append( [ pIn, (0,0) ] )
 
 direction = [ 'U', 'D', 'L', 'R' ]
@@ -28,7 +33,7 @@ while len( work ) > 0:
   if x == 3 and y == 3:
     print "made it!"
     print "answer: ", s[len(pIn):]
-    print "confirm:", pOut
+    #print "confirm:", pOut
     exit()
 
   m = hashlib.md5()
