@@ -3,12 +3,12 @@ from copy import deepcopy
 # discs[num] = [ size, cur ]
 discs = []
 
-version = 'day2' # example, day1, day2
+version = 'part1' # example, part1, part2
 if version == 'example':
   discs.append( [ 5, 4 ] )
   discs.append( [ 2, 1 ] )
 
-elif version[0:3] == 'day':
+elif version[0:-1] == 'part':
   discs.append( [ 7, 0 ] )
   discs.append( [ 13, 0 ] )
   discs.append( [ 3, 2 ] )
@@ -16,8 +16,10 @@ elif version[0:3] == 'day':
   discs.append( [ 17, 0 ] )
   discs.append( [ 19, 7 ] )
 
-if version[3] == '2':
+if version[-1] == '2':
   discs.append( [ 11, 0 ] )
+
+print version, version[0:-1], version[-1]
 
 
 def advance( d, tDelta ):

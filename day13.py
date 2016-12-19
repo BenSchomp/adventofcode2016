@@ -2,7 +2,8 @@ from collections import deque
 
 end = (31, 39)
 puzzleInput = 1352
-part2 = False
+
+version = 'part1'
 
 def isOpen( x, y ):
   result = x*x + 3*x + 2*x*y + y + y*y
@@ -41,7 +42,7 @@ while len( work ) > 0:
   cur = work.popleft()
   ( loc, depth ) = cur[0], cur[1]
 
-  if part2 and depth > 49:
+  if version == 'part2' and depth > 49:
     print len( seen )
     exit()
 
