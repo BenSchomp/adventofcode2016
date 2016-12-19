@@ -39,7 +39,9 @@ done = False
 print "Init:", discs
 while not done:
   t += 1
+  if t % 100000 == 0:
+    print "  t =", t
   done = advance( deepcopy( discs ), t )
 
-print "done, t =", t
+print "* t =", t
 
