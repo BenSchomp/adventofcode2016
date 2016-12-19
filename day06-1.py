@@ -1,6 +1,5 @@
 import operator
-
-file = open('day6-input.txt', 'r')
+file = open('day06-input.txt', 'r')
 
 numcols = 0
 cols = []
@@ -22,6 +21,6 @@ file.close()
 answer = ''
 for i in range(0, numcols-1):
   sortedcols = sorted( cols[i].items(), key=operator.itemgetter(1) )
-  answer += sortedcols[0][0]
+  answer += sortedcols[-1][0]
 
 print answer

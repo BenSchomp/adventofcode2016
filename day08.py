@@ -1,5 +1,5 @@
-#file = open('day8-example.txt', 'r')
-file = open('day8-input.txt', 'r')
+#file = open('day08-example.txt', 'r')
+file = open('day08-input.txt', 'r')
 
 def displayScreen( screen, w, h ):
   for y in range( h ):
