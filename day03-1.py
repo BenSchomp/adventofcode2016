@@ -1,4 +1,4 @@
-file = open('day3-input.txt', 'r')
+file = open('day03-input.txt', 'r')
 
 valid = 0
 for line in file:

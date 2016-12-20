@@ -1,24 +1,6 @@
 import operator
 
-def shiftCipher( word, shifts ):
-  shift = shifts % 26
-  low = ord( 'a' )
-  high = ord( 'z' )
-
-  result = ''
-  for i in range( 0, len(word) ):
-    cur = ord( word[i] )
-    if cur < low or cur > high:
-      result += ' '
-    else:
-      cur += shift
-      if cur > high:
-        cur -= 26
-      result += chr( cur )
-
-  return result
-
-file = open('day4-input.txt', 'r')
+file = open('day04-input.txt', 'r')
 
 answer = 0
 for line in file:
@@ -27,7 +9,7 @@ for line in file:
   
   parts = parts[0].rsplit( '-', 1 )
   name = parts[0]
-  sectorid = int(parts[1])
+  sectorid = parts[1]
 
   counts = {}
 
@@ -64,10 +46,8 @@ for line in file:
 
   testchecksum = testchecksum[:5]
   if checksum == testchecksum:
-    answer += sectorid
+    answer += int(sectorid)
     #print answer, name, sectorid, checksum, testchecksum
-    print sectorid, shiftCipher( name, sectorid )
 
 print answer
 file.close()
-

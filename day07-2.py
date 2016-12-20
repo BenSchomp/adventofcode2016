@@ -1,5 +1,5 @@
-#file = open('day7-example.txt', 'r')
-file = open('day7-input.txt', 'r')
+#file = open('day07-example.txt', 'r')
+file = open('day07-input.txt', 'r')
 
 def getABA( word ):
   i = 0

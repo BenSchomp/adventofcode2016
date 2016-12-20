@@ -1,4 +1,3 @@
-
 file = open('day12-input.txt', 'r')
 
 instr = []
@@ -6,8 +5,14 @@ for line in file:
   line = line.rstrip()
   instr.append( line )
 
+file.close()
+
 i = 0
-reg = { 'a': 0, 'b': 0, 'c': 1, 'd': 0 }
+reg = { 'a': 0, 'b': 0, 'c': 0, 'd': 0 }
+
+version = 'part1'
+if version == 'part2':
+  reg['c'] = 1
 
 def isReg( x ):
   return x >= 'a' and x <= 'd'
@@ -52,4 +57,3 @@ while i < len(instr):
 
 print reg
 
-file.close()

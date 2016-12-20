@@ -1,5 +1,5 @@
-#file = open('day9-example.txt', 'r')
-file = open('day9-input.txt', 'r')
+#file = open('day09-example.txt', 'r')
+file = open('day09-input.txt', 'r')
 
 def decompress( word ):
   count = 0

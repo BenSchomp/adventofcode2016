@@ -24,8 +24,8 @@ class Node:
   def key_old( self ):
     result = ''
     for floor in self.floors:
-      result += ''.join( floor ) + '|'
-    result += '-' + str( self.elevator )
+      result += ''.join( floor ) + ','
+    result += ':' + str( self.elevator )
     return result
 
   # the key is not a hash - multiple states can map to the same key
@@ -125,7 +125,7 @@ class Node:
       i = self
       step = self.distance
       while i.parentId != -1:
-        i.display( 'step ' + str(step) )
+        i.display( 'step ' + str(step) + ' - ' + i.key_old() + ' / ' + i.key() )
         i = self.nodes[i.parentId]
         step -= 1
       i.display( 'step ' + str(step) )
