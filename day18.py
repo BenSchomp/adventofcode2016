@@ -6,13 +6,17 @@ if version == 'example':
 elif version == 'example2':
   pIn = '.^^.^.^^^^'
   pRows = 10
-elif version == 'part1':
+elif version[0:-1] == 'part':
   pIn = '.^.^..^......^^^^^...^^^...^...^....^^.^...^.^^^^....^...^^.^^^...^^^^.^^.^.^^..^.^^^..^^^^^^.^^^..^'
-  pRows = 40
+  if version[-1] == '1':
+    pRows = 40
+  else:
+    pRows = 400000
 
 width = len( pIn )
 rows = [ pIn ]
 row = iter(rows)
+count = pIn.count( '.' )
 
 while len( rows ) < pRows:
   newRow = ''
@@ -27,15 +31,12 @@ while len( rows ) < pRows:
       newTile = '^'
     else:
       newTile = '.'
+      count += 1
 
     newRow += newTile
 
   rows.append( newRow )
-
-count = 0
-for r in rows:
-  count += r.count( '.' )
-  print r
+  print newRow
 
 print '\nnumber safe tiles:', count
 
