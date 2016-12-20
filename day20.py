@@ -1,4 +1,10 @@
-file = open('day20-input.txt', 'r')
+version = "part2"
+if version == "example":
+  file = open('day20-example.txt', 'r')
+  maxIp = 9
+elif version[0:-1] == "part":
+  file = open('day20-input.txt', 'r')
+  maxIp = 4294967295
 
 blacklist = []
 foo = {}
@@ -24,43 +30,32 @@ for line in file:
   foo[b] = 1
 
 file.close()
+
+i = None
+j = None
+count = 0
 blacklist.sort()
-print blacklist
+for k in blacklist:
+  if i == None:
+    i = k[0]
+    count = k[0]
+    j = k[1]
+    continue
 
-for k  in sorted(foo.iterkeys()):
-  print k, foo[k]
+  if k[0] - j > 1:
+    #print " *gap"
+    if version == "part1":
+      print "First:", j+1
+      exit()
+    count += k[0] - j - 1 # inclusive
+    i = k[0]
+    j = k[1]
 
+  if k[1] > j:
+    j = k[1]
 
-# 0 is a lower bound
-# 1 is an upper bound
-0 0
-1888888 1
-1888889 0
-1900859 0
-1904062 1
-2087697 1
-2087698 0
-2122623 1
-2122624 0
-2147340 0
-2182652 0
-2205762 0
-2214508 1
-2315281 1
-2390846 1
-2390847 0
-3306156 0
-5537005 1
-5537006 0
-8407552 0
-11174641 0
-13762041 1
-14606952 1
-14606953 0
-14658906 1
-15778021 1
-15778022 0
-16019348 1
-18449276 1
-19449261 1
+  #print k, "i:", i, ", j:", j, ", count:", count
+
+count += maxIp - j
+print "Count:", count
 
