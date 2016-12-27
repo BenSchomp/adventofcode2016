@@ -33,8 +33,8 @@ def display( state ):
 
 # -=-=- init setup -=-=-
 
-#file = open('day24-example.txt', 'r')
-file = open('day24-input.txt', 'r')
+file = open('day24-example.txt', 'r')
+#file = open('day24-input.txt', 'r')
 
 # part 1: hit all locations
 # part 2: return home
@@ -112,7 +112,7 @@ while len( work ) > 0:
 
             if len( cur ) < 4:
               if -2 in cur:
-                print "Cleared locations in %d Steps ... now return to start." % cur[-1]
+                print "Cleared in %d Steps ... now go home ..." % cur[-1]
                 goHome = True
                 # since the locations are cleared out:
                 #  a. set an item to the non-negative location
@@ -122,7 +122,7 @@ while len( work ) > 0:
                 del cur[-2]
                 cur[-3] = 'dummy' # just to keep the count even
               else:
-                print "Done."
+                print "Done!\n"
                 display( cur )
                 exit()
 
