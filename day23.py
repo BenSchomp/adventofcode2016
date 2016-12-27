@@ -7,31 +7,31 @@ if version == 'example':
 elif version == 'part1':
   file = open('day23-input.txt', 'r')
   reg['a'] = 7
+elif version == 'part2':
+  file = open('day23-input.txt', 'r')
+  reg['a'] = 12 
 
 instr = []
 for line in file:
   line = line.rstrip()
-  instr.append( line )
+  parts = line.split()
+  instr.append( parts )
 
 file.close()
 
 def toggle( x ):
-  cmd = instr[x]
-  parts = cmd.split()
-  cur = parts[0]
+  cur = instr[x][0]
 
   if cur == 'inc':
-    cmd = cmd.replace( 'inc', 'dec', 1 )
-  elif cur == 'dec':
-    cmd = cmd.replace( 'dec', 'inc', 1 )
-  elif cur == 'tgl':
-    cmd = cmd.replace( 'tgl', 'inc', 1 )
+    cmd = 'dec'
+  elif cur == 'dec' or cur == 'tgl':
+    cmd = 'inc'
   elif cur == 'jnz':
-    cmd = cmd.replace( 'jnz', 'cpy', 1 )
+    cmd = 'cpy'
   elif cur == 'cpy':
-    cmd = cmd.replace( 'cpy', 'jnz', 1 )
+    cmd = 'jnz'
 
-  instr[x] = cmd
+  instr[x][0] = cmd
 
 def isReg( x ):
   return x >= 'a' and x <= 'd'
@@ -39,7 +39,7 @@ def isReg( x ):
 while i >= 0 and i < len(instr):
   #print i, instr, reg
 
-  parts = instr[i].split()
+  parts = instr[i]
 
   cur = parts[0]
   if cur == 'cpy': # two args
