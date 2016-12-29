@@ -17,19 +17,21 @@ if part == 1:
 else:
   cur = int( n / 2 ) # first steal is from across the circle
 
-count = ( n - 1 ) # only do n-1 steals
+count = 0
+skip = ( n % 2 != 0 )
 while True:
   # steal
   elves[cur] = 0
   cur = getNext( cur )
 
-  count -= 1
-  if count == 0:
+  count += 1
+  if count >= n-1: # only need n-1 steals
     break
 
-  if part == 2 and count % 2 == 0:
-    continue
-
+  if part == 2: # skip every-other (xOxOxO...)
+    skip = not skip
+    if skip:
+      continue
   cur = getNext( cur )
 
 print 'answer: elf #%d' % (elves.index( 1 ) + 1)
