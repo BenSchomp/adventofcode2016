@@ -1,21 +1,38 @@
 import hashlib
-import collections
 
-version = 'part1'
-if version == 'example':
+version = 'part2'
+if version[0:7] == 'example':
   salt = 'abc'
-elif version == 'part1':
+elif version[0:4] == 'part':
   salt = 'yjdafjpo'
 
+if version[-1] == '2':
+  stretch = 2016
+else:
+  stretch = 0
+
+# biggest index of pre-calculated hash
 hashMax = 0
-# threes[18] = '8'
+
+# threes[ 18 ] = '8'
+# threes[ index ] = 'char'
 threes = dict()
-# fives['e'= [816, 1234, 1801]
+
+# fives[ 'char' ] = [ index, index, ... ]
+# fives[ 'e' ]= [ 816, 1234, 1801 ]
 fives = dict()
+
+# calculate md5 of s
+def getHash( s ):
+  m = hashlib.md5()
+  m.update( s )
+  return m.hexdigest()
 
 # if lookingFor is set to a char, returns True/False if that char was seen 5x
 # if lookingFor not set, returns True/False if a 3x char was found
-def buildHash( i, lookingFor = None ):
+# note: this will store off any 3x or 5x that are found in threes and fives
+#        for later lookups
+def findKeyHash( i, lookingFor = None ):
   global hashMax
   found = False
 
@@ -27,9 +44,9 @@ def buildHash( i, lookingFor = None ):
 
   hashMax = i
 
-  m = hashlib.md5()
-  m.update( salt + str(i) )
-  h = m.hexdigest()
+  h = getHash( salt + str(i) )
+  for y in range( stretch ):
+    h = getHash( h )
 
   threeInARowChar = None
   fiveInARowChar = None
@@ -65,38 +82,37 @@ def buildHash( i, lookingFor = None ):
 i = 0
 count = 0
 while count < 64:
-  #print 'buildHash( %d )' % i
-  if buildHash( i ):
+  if findKeyHash( i ):
     lookForChar = threes[i]
+    #print "New: '%s' at %d" % ( lookForChar*3, i )
     del threes[i]
-    #print "found a three:", i, lookForChar
 
-    stopIdx = i + 1001
-    #print 'stopIdx:', stopIdx, 'hashMax:', hashMax
+    # look for the corresponding 5x from i+1 through i+1000
     j = i + 1
-    while j <= stopIdx:
+    stopLooking = i + 1000
+    while j <= stopLooking:
       if j <= hashMax:
-        #print 'looking in fives'
         j = hashMax
         if lookForChar in fives:
           fiveIdxs = fives[lookForChar]
-          #print 'found', lookForChar, 'in fives:', fiveIdxs
+          #print "  Found: '%s' in fives: " % (lookForChar*5), fiveIdxs
           fiveIdxs.sort()
           for fiveIdx in fiveIdxs:
-            if fiveIdx > i and fiveIdx <= stopIdx:
+            if fiveIdx > i and fiveIdx <= stopLooking:
               count += 1
-              print "  #", count, ', index:', i, ', char:', lookForChar
-              j = stopIdx + 1
+              print "--  #%d. '%s' at %d" % ( count, lookForChar*3, i )
+              j = stopLooking + 1 # found it, break the outer loop
               continue
 
       else:
-        #print 'buildHash( %d, %s)' % (j, lookForChar)
-        if buildHash( j, lookForChar ):
+        if findKeyHash( j, lookForChar ):
           count += 1
-          print "  #", count, ', index:', i, ', char:', lookForChar
+          print "++  #%d. '%s' at %d" % ( count, lookForChar*3, i )
           continue
 
       j += 1
+
   i += 1
 
+print 'Answer:', i-1
 
