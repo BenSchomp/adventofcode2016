@@ -1,13 +1,25 @@
 from copy import deepcopy
+import sys
 
-version = "part1"
+version = "part2"
 if version == "example":
   file = open('day21-example.txt', 'r')
   pIn = 'abcde'
-elif version[0:-1] == "part":
+  unscramble = False
+elif version == "part1":
   file = open('day21-input.txt', 'r')
   pIn = 'abcdefgh'
+  unscramble = False
+elif version == "part2":
+  file = open('day21-input.txt', 'r')
+  pIn = 'fbgdceah'
+  unscramble = True
 
+lines = []
+for line in file:
+  lines.append( line )
+
+file.close()
 
 def bail():
   print ' ! bad command'
@@ -25,7 +37,11 @@ s = list( pIn )
 l = len( s )
 print 'init'
 display( s )
-for line in file:
+
+if unscramble:
+  lines.reverse()
+
+for line in lines:
   line = line.rstrip()
   parts = line.split()
   cmd = parts[0]
@@ -62,15 +78,31 @@ for line in file:
       print 'right',
     elif what == 'based':
       idx = s.index( parts[6] )
-      steps = 1 + idx
-      if idx >= 4:
-        steps += 1
       print 'based on position', idx,
+
+      # Deterministic when password is length 8 ...
+      # x....... >>> .x......  (0 to 1) >> unscrabmle >> (1 to 0) or 1:-1 steps
+      # .x...... >>> ...x....  (1 to 3)                  (3 to 1) or 3:-2 steps
+      # ..x..... >>> .....x..  (2 to 5)                  (5 to 2) or 5:-3 steps
+      # ...x.... >>> .......x  (3 to 7)                  (7 to 3) or 7:-4 steps
+      # ....x... >>> ..x.....  (4 to 2)                  (2 to 4) or 2:+2 steps
+      # .....x.. >>> ....x...  (5 to 4)                  (4 to 5) or 4:+1 steps
+      # ......x. >>> ......x.  (6 to 6)                  (6 to 6) or 6:0 steps
+      # .......x >>> x.......  (7 to 0)                  (0 to 7) or 0:-1 steps
+
+      if unscramble:
+        steps = -[ -1, -1, +2, -2, +1, -3, 0, -4 ][idx]
+      else:
+        steps = 1 + idx
+        if idx >= 4:
+          steps += 1
     else:
       bail()
 
+    if not unscramble:
+      steps *= -1
     print '(%d)' % steps
-    steps *= -1
+
     tmp = deepcopy(s)
     for i in range( l ):
       s[i] = tmp[(i + steps) % l]
@@ -90,6 +122,10 @@ for line in file:
     if what == 'position':
       x = int(parts[2])
       y = int(parts[5])
+      if unscramble:
+        tmp = x
+        x = y
+        y = tmp
       print 'move: position', x, y
       tmp = s.pop( x )
       s.insert( y, tmp )
@@ -101,4 +137,3 @@ for line in file:
 
   display( s )
 
-file.close()
